@@ -12,6 +12,7 @@ import singer
 from singer import utils
 from singer import metadata
 from singer import Transformer
+from singer import Catalog
 from tap_shopify.context import Context
 from tap_shopify.exceptions import ShopifyError
 from tap_shopify.streams.base import shopify_error_handling, get_request_timeout
@@ -96,6 +97,7 @@ def discover():
             continue
 
         stream = Context.stream_objects[schema_name]()
+        schema = singer.resolve_schema_references(schema, refs)
 
         # resolve_schema_references() is changing value of passed refs.
         # Customer is a stream and it's a nested field of orders and abandoned_checkouts streams
@@ -109,11 +111,12 @@ def discover():
         catalog_entry = {
             'stream': schema_name,
             'tap_stream_id': schema_name,
-            'schema': catalog_schema,
-            'metadata': get_discovery_metadata(stream, schema),
+            'schema': schema,
+            'metadata' : get_discovery_metadata(stream, schema),
             'key_properties': stream.key_properties,
             'replication_key': stream.replication_key,
-            'replication_method': stream.replication_method
+            'replication_method': stream.replication_method,
+            'order': [str(column) for column in schema['properties']]
         }
         streams.append(catalog_entry)
 
@@ -194,6 +197,30 @@ def main():
     try:
         # Parse command line arguments
         args = utils.parse_args(REQUIRED_CONFIG_KEYS)
+
+        # If discover flag was passed, run discovery mode and dump output to stdout
+        if args.discover:
+            catalog = discover()
+            print(json.dumps(catalog, indent=2))
+        # Otherwise run in sync mode
+        else:
+            Context.tap_start = utils.now()
+            if args.properties:
+                # Sort the properties
+                streams = args.properties['streams']
+                for stream in streams:
+                    new_properties = {}
+                    old_properties = stream['schema']['properties']
+                    order = stream['order']
+
+                    for column in order:
+                        new_properties[column] = old_properties[column]
+
+                    stream['schema']['properties'] = new_properties
+
+                Context.catalog = Catalog.from_dict(args.properties)
+            else:
+                Context.catalog = discover()
 
         Context.config = args.config
         Context.state = args.state
