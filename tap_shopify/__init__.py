@@ -116,7 +116,7 @@ def discover():
             'key_properties': stream.key_properties,
             'replication_key': stream.replication_key,
             'replication_method': stream.replication_method,
-            'order': [str(column) for column in schema['properties']]
+            'column_order': [str(column) for column in schema['properties']]
         }
         streams.append(catalog_entry)
 
