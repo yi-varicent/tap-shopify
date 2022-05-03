@@ -157,7 +157,7 @@ class Stream():
     # This function can be overridden by subclasses for specialized API
     # interactions. If you override it you need to remember to decorate it
     # with shopify_error_handling to get 429 and 500 handling.
-    @shopify_error_handling()
+    @shopify_error_handling
     def call_api(self, query_params):
         # set timeout
         self.replication_object.set_timeout(self.request_timeout)

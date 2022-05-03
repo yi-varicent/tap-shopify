@@ -10,7 +10,7 @@ class OrderRefunds(Stream):
     replication_object = shopify.Refund
     replication_key = 'created_at'
 
-    @shopify_error_handling()
+    @shopify_error_handling
     def get_refunds(self, parent_object, since_id):
         # set timeout
         self.replication_object.set_timeout(self.request_timeout)
