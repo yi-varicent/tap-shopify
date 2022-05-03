@@ -211,7 +211,7 @@ def main():
                 for stream in streams:
                     new_properties = {}
                     old_properties = stream['schema']['properties']
-                    order = stream['order']
+                    order = stream['column_order']
 
                     for column in order:
                         new_properties[column] = old_properties[column]
