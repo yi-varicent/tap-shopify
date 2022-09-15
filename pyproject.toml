@@ -14,7 +14,7 @@ singer-python = "~5.4.1"
 
 [tool.poetry.dev-dependencies]
 
-[tool.poetry.plugins."console_scripts"]
+[tool.poetry.scripts]
 tap-shopify = "tap_shopify:main"
 
 [build-system]
