@@ -27,7 +27,28 @@ This tap:
 
 1. Install
 
-    pip install tap-shopify
+    Ensure poetry is installed on your machine. 
+
+      - This command will return the installed version of poetry if it is installed.
+      ```
+      poetry --version
+      ```
+
+      - If not, install poetry using the following commands (from https://python-poetry.org/docs/#installation):
+      ```
+      curl -sSL https://install.python-poetry.org | python3 -
+      PATH=~/.local/bin:$PATH
+      ```
+
+      Within the `tap-shopify` directory, install dependencies:
+      ```
+      poetry install
+      ```
+
+      Start the shell:
+      ```
+      poetry shell
+      ```
 
 2. Create the config file
 
