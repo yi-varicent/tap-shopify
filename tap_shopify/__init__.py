@@ -73,10 +73,6 @@ def load_schema_references():
 
     return refs
 
-def add_synthetic_key_to_schema(schema):
-    for k in SDC_KEYS:
-        schema['properties']['_sdc_shop_' + k] = {'type': ["null", SDC_KEYS[k]]}
-    return schema
 
 def discover():
     initialize_shopify_client() # Checking token in discover mode
@@ -96,8 +92,7 @@ def discover():
         # and those 3 _sdc fields are also added inside nested field customer for above 2 stream
         # so create a copy of refs before passing it to resolve_schema_references().
         refs_copy = copy.deepcopy(refs)
-        catalog_schema = add_synthetic_key_to_schema(
-            singer.resolve_schema_references(schema, refs_copy))
+        catalog_schema = singer.resolve_schema_references(schema, refs_copy)
 
         # create and add catalog entry
         catalog_entry = {
